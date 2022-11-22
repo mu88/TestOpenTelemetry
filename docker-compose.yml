@@ -1,0 +1,29 @@
+version: '3'
+services:
+  influxdb:
+    image: influxdb:2.5.1
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    env_file:
+      - ./.env
+  telegraf:
+    image: telegraf:1.24.3
+    container_name: telegraf
+    ports:
+      - "4317:4317"
+    env_file:
+      - ./.env
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
+    depends_on:
+      - influxdb
+  grafana:
+    image: grafana/grafana:9.2.5
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    depends_on:
+      - influxdb
